@@ -2,10 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
+import '../models/product.dart';
 import '../utils/custom_theme.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({super.key});
+  const ProductScreen({super.key, required this.product});
+
+  final Product product;
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -16,13 +19,9 @@ class _ProductScreenState extends State<ProductScreen> {
 
   ///
   Future<void> onAddToCart() async {
-    setState(() {
-      addButtonLoad = true;
-    });
+    setState(() => addButtonLoad = true);
 
-    setState(() {
-      addButtonLoad = false;
-    });
+    setState(() => addButtonLoad = false);
   }
 
   ///
@@ -41,10 +40,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       SizedBox(
                         height: 500,
                         width: double.infinity,
-                        child: CachedNetworkImage(
-                          imageUrl: 'http://toyohide.work/BrainLog/public/UPPHOTO/2014/2014-10-14/2014-10-14_001_l.jpg',
-                          fit: BoxFit.cover,
-                        ),
+                        child: CachedNetworkImage(imageUrl: widget.product.image, fit: BoxFit.cover),
                       ),
                       Positioned(
                         top: 35,
@@ -70,35 +66,28 @@ class _ProductScreenState extends State<ProductScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(top: 22),
-                            child: Text('title'),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20),
+                          Padding(padding: const EdgeInsets.only(top: 22), child: Text(widget.product.title)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
                             child: Row(
                               children: [
-                                Text('MRP: '),
-                                Text('price'),
+                                const Text('MRP: '),
+                                Text(widget.product.price.toString()),
                               ],
                             ),
                           ),
-                          CustomButton(
-                            text: 'add to cart',
-                            press: onAddToCart,
-                            loading: addButtonLoad,
-                          ),
+                          CustomButton(text: 'add to cart', press: onAddToCart, loading: addButtonLoad),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             child: Text(
-                              'about the items',
+                              widget.product.category,
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 20),
                             child: Text(
-                              'the items description',
+                              widget.product.description,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
@@ -119,9 +108,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   boxShadow: CustomTheme.cardShadow,
                 ),
                 child: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
+                  onPressed: () => Navigator.of(context).pop(true),
                   icon: const Icon(Icons.arrow_back),
                 ),
               ),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../components/grid_card.dart';
-import 'login_screen.dart';
+import '../components/loader.dart';
+import '../models/product.dart';
+import '../utils/firestore.dart';
+import 'product_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,29 +14,48 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final data = ['1', '2'];
+  ///
+  late Future<List<Product>> products;
+
+  ///
+  @override
+  void initState() {
+    super.initState();
+
+    products = FirestoreUtil.getProducts([]);
+  }
 
   ///
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 30,
-        crossAxisSpacing: 30,
-      ),
-      itemBuilder: (context, index) {
-        return GridCard(
-          index: index,
-          press: onCardPress,
-        );
+    return FutureBuilder<List<Product>>(
+      future: products,
+      builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 30,
+              crossAxisSpacing: 30,
+            ),
+            itemBuilder: (context, index) {
+              return GridCard(
+                index: index,
+                press: () => onCardPress(snapshot.data![index]),
+                product: snapshot.data![index],
+              );
+            },
+            itemCount: snapshot.data?.length,
+          );
+        } else {
+          return const Center(child: Loader());
+        }
       },
-      itemCount: data.length,
     );
   }
 
   ///
-  void onCardPress() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+  void onCardPress(Product product) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductScreen(product: product)));
   }
 }

@@ -1,13 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../models/product.dart';
 import '../utils/custom_theme.dart';
 
 class GridCard extends StatelessWidget {
-  const GridCard({super.key, required this.index, required this.press});
+  const GridCard({super.key, required this.index, required this.press, required this.product});
 
   final int index;
   final void Function() press;
+  final Product product;
 
   ///
   @override
@@ -25,10 +27,7 @@ class GridCard extends StatelessWidget {
                 flex: 7,
                 child: SizedBox(
                   width: double.infinity,
-                  child: CachedNetworkImage(
-                    imageUrl: 'http://toyohide.work/BrainLog/public/UPPHOTO/2014/2014-08-08/2014-08-08_001_l.jpg',
-                    fit: BoxFit.cover,
-                  ),
+                  child: CachedNetworkImage(imageUrl: product.image, fit: BoxFit.cover),
                 ),
               ),
               Expanded(
@@ -39,12 +38,12 @@ class GridCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          'title',
+                          product.title,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ),
                       Text(
-                        'price',
+                        product.price.toString(),
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],

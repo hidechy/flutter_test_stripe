@@ -49,9 +49,9 @@ class FirestoreUtil {
           .doc(productId);
 
       if ((await product.get()).exists) {
-        await product.update({'count': FieldValue.increment(1)});
+        await product.update({'id': productId, 'count': FieldValue.increment(1)});
       } else {
-        await product.set({'count': 1});
+        await product.set({'id': productId, 'count': 1});
       }
     } on FirebaseException catch (e, stackTrace) {
       log('error!!', stackTrace: stackTrace, error: e);

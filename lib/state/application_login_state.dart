@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:test_stripe_shopper/utils/common_util.dart';
 
 enum ApplicationLoginState { loggedOut, loggedIn }
 
@@ -42,6 +43,8 @@ class ApplicationState extends ChangeNotifier {
     try {
       final userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+
+      await CommonUtil.backendCall(userCredential.user!, CommonUtil.stripeUserCreate);
     } on FirebaseAuthException catch (e) {
       errorCallBack(e);
     }

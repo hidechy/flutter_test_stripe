@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:test_stripe_shopper/state/application_login_state.dart';
+import 'package:test_stripe_shopper/utils/firestore.dart';
 
 import '../components/custom_button.dart';
 import '../models/product.dart';
@@ -20,6 +23,8 @@ class _ProductScreenState extends State<ProductScreen> {
   ///
   Future<void> onAddToCart() async {
     setState(() => addButtonLoad = true);
+
+    await FirestoreUtil.addToCart(context.read<ApplicationState>().user, widget.product.id);
 
     setState(() => addButtonLoad = false);
   }

@@ -19,8 +19,8 @@
 - 上記リポジトリをクローンして下記コマンドを実行
 - cloud_firestoreにデータが入った
 
-'''javascript
+```javascript
 (base) toyohide@toyohidenoMacBook-Pro backend-stripe % npm i
 
 (base) toyohide@toyohidenoMacBook-Pro backend-stripe % node uploader.js
-'''
+```

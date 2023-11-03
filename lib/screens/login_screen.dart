@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:test_stripe_shopper/components/custom_button.dart';
 import 'package:test_stripe_shopper/components/custom_text_input.dart';
 import 'package:test_stripe_shopper/state/application_login_state.dart';
+import 'package:test_stripe_shopper/utils/common_util.dart';
 import 'package:test_stripe_shopper/utils/custom_theme.dart';
 
 import '../utils/login_data.dart';
@@ -165,6 +166,8 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _loadingButton = false;
       });
+
+      CommonUtil.showAlert(context, 'error processing request', e.message.toString());
     }
   }
 }

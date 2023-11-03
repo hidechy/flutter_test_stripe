@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_stripe_shopper/state/application_login_state.dart';
+import 'package:test_stripe_shopper/utils/common_util.dart';
 import 'package:test_stripe_shopper/utils/custom_theme.dart';
 import 'package:test_stripe_shopper/utils/firestore.dart';
 
@@ -53,7 +54,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                   child: CustomButton(
                     text: 'Checkout',
-                    press: () {},
+                    press: checkout,
                   ),
                 ),
               ],
@@ -97,5 +98,28 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
         ],
       ),
     );
+  }
+
+  ///
+  Future<void> checkout() async {
+    setState(() => _checkoutButtonLoading = true);
+
+    final error = await CommonUtil.checkoutFlow(context.read<ApplicationState>().user!);
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (error.isEmpty) {
+      // ignore: use_build_context_synchronously
+      CommonUtil.showAlert(context, 'Success', 'Your order is placed.');
+    } else {
+      // ignore: use_build_context_synchronously
+      CommonUtil.showAlert(context, 'Alert', error);
+    }
+
+    setState(() {
+      _checkoutButtonLoading = false;
+
+      carts = FirestoreUtil.getCart(context.read<ApplicationState>().user);
+    });
   }
 }

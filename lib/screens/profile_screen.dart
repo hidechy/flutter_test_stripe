@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:test_stripe_shopper/components/custom_button.dart';
+
+import '../state/application_login_state.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -9,8 +12,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late BuildContext _context;
+
+  ///
   @override
   Widget build(BuildContext context) {
+    _context = context;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Column(
@@ -25,10 +33,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           CustomButton(
             text: 'Sign Out',
-            press: () {},
+            press: signOutButtonPressed,
           ),
         ],
       ),
     );
   }
+
+  ///
+  void signOutButtonPressed() => _context.read<ApplicationState>().signOut();
 }

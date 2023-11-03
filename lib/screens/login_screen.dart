@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:test_stripe_shopper/components/custom_button.dart';
 import 'package:test_stripe_shopper/components/custom_text_input.dart';
+import 'package:test_stripe_shopper/state/application_login_state.dart';
 import 'package:test_stripe_shopper/utils/custom_theme.dart';
 
 import '../utils/login_data.dart';
@@ -22,7 +25,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailEditingController = TextEditingController();
   final TextEditingController _passwordEditingController = TextEditingController();
 
+  bool _loadingButton = false;
+
   Map<String, String> data = {};
+
+  late BuildContext _context;
 
   ///
   void switchLogin() {
@@ -38,6 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
   ///
   @override
   Widget build(BuildContext context) {
+    _context = context;
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
@@ -65,6 +74,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _emailEditingController.text = 'hide.toyoda@gmail.com';
+                    _passwordEditingController.text = 'hidechy4819';
+                  },
+                  child: const Text('dummy'),
+                ),
+                Container(),
+              ],
             ),
             model(data, _emailEditingController, _passwordEditingController),
             Row(
@@ -123,5 +145,26 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   ///
-  void loginButtonPressed() {}
+  void loginButtonPressed() {
+    setState(() {
+      _loadingButton = true;
+    });
+
+    final applicationState = _context.read<ApplicationState>();
+
+    if (mapEquals(data, LoginData.signUp)) {
+      applicationState.signUp(_emailEditingController.text, _passwordEditingController.text, loginError);
+    } else {
+      applicationState.signIn(_emailEditingController.text, _passwordEditingController.text, loginError);
+    }
+  }
+
+  ///
+  void loginError(FirebaseAuthException e) {
+    if (e.message != '') {
+      setState(() {
+        _loadingButton = false;
+      });
+    }
+  }
 }

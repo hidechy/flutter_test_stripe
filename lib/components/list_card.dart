@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../models/cart.dart';
 import '../utils/custom_theme.dart';
 
 class ListCard extends StatelessWidget {
-  const ListCard({super.key});
+  const ListCard({super.key, required this.cart});
+
+  final Cart cart;
 
   ///
   @override
@@ -22,10 +25,7 @@ class ListCard extends StatelessWidget {
                 flex: 4,
                 child: SizedBox(
                   height: double.infinity,
-                  child: CachedNetworkImage(
-                    imageUrl: 'http://toyohide.work/BrainLog/public/UPPHOTO/2014/2014-08-30/2014-08-30_001_l.jpg',
-                    fit: BoxFit.cover,
-                  ),
+                  child: CachedNetworkImage(imageUrl: cart.image, fit: BoxFit.cover),
                 ),
               ),
               Expanded(
@@ -38,24 +38,15 @@ class ListCard extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          'title',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
+                        child: Text(cart.title, style: Theme.of(context).textTheme.headlineSmall),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          'qty: 1',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
+                        child: Text('qty: ${cart.count}', style: Theme.of(context).textTheme.bodySmall),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          'price',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
+                        child: Text(cart.price.toString(), style: Theme.of(context).textTheme.headlineSmall),
                       ),
                     ],
                   ),

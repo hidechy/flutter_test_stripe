@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:test_stripe_shopper/components/custom_button.dart';
-import 'package:test_stripe_shopper/components/list_card.dart';
+import 'package:provider/provider.dart';
+import 'package:test_stripe_shopper/state/application_login_state.dart';
+import 'package:test_stripe_shopper/utils/custom_theme.dart';
+import 'package:test_stripe_shopper/utils/firestore.dart';
+
+import '../components/custom_button.dart';
+import '../components/list_card.dart';
+import '../components/loader.dart';
+import '../models/cart.dart';
 
 class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({super.key});
@@ -10,38 +17,61 @@ class CheckOutScreen extends StatefulWidget {
 }
 
 class _CheckOutScreenState extends State<CheckOutScreen> {
-  final carts = ['1', '2'];
+  ///
+  Future<List<Cart>>? carts;
+  bool _checkoutButtonLoading = false;
+
+  ///
+  @override
+  void initState() {
+    super.initState();
+
+    carts = FirestoreUtil.getCart(context.read<ApplicationState>().user);
+  }
 
   ///
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 30),
-            itemCount: carts.length,
-            itemBuilder: (context, index) {
-              return const ListCard();
-            },
-          ),
-          priceFooter(),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-            child: CustomButton(
-              text: 'Checkout',
-              press: () {},
+    return FutureBuilder(
+      future: carts,
+      builder: (context, AsyncSnapshot<List<Cart>> snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(vertical: 30),
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (context, index) {
+                    return ListCard(cart: snapshot.data![index]);
+                  },
+                ),
+                priceFooter(snapshot.data!),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                  child: CustomButton(
+                    text: 'Checkout',
+                    press: () {},
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
+          );
+        } else if (snapshot.data != null && snapshot.data!.isEmpty) {
+          return const Center(
+            child: Icon(Icons.add_shopping_cart_sharp, color: CustomTheme.yellow, size: 150),
+          );
+        } else {
+          return const Center(child: Loader());
+        }
+      },
     );
   }
 
   ///
-  Widget priceFooter() {
+  Widget priceFooter(List<Cart> cartsList) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Column(
@@ -58,7 +88,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 ),
                 const Spacer(),
                 Text(
-                  'price',
+                  FirestoreUtil.getCartTotal(cartsList).toString(),
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ],

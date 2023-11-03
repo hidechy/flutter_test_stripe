@@ -14,6 +14,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late BuildContext _context;
 
+  bool _loadingButton = false;
+
   ///
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           CustomButton(
             text: 'Sign Out',
             press: signOutButtonPressed,
+            loading: _loadingButton,
           ),
         ],
       ),
@@ -41,5 +44,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   ///
-  void signOutButtonPressed() => _context.read<ApplicationState>().signOut();
+  Future<void> signOutButtonPressed() async {
+    setState(() {
+      _loadingButton = true;
+    });
+
+    await _context.read<ApplicationState>().signOut();
+  }
 }

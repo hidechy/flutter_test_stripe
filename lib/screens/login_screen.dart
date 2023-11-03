@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   ///
-  void loginButtonPressed() {
+  Future<void> loginButtonPressed() async {
     setState(() {
       _loadingButton = true;
     });
@@ -153,9 +153,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final applicationState = _context.read<ApplicationState>();
 
     if (mapEquals(data, LoginData.signUp)) {
-      applicationState.signUp(_emailEditingController.text, _passwordEditingController.text, loginError);
+      await applicationState.signUp(_emailEditingController.text, _passwordEditingController.text, loginError);
     } else {
-      applicationState.signIn(_emailEditingController.text, _passwordEditingController.text, loginError);
+      await applicationState.signIn(_emailEditingController.text, _passwordEditingController.text, loginError);
     }
   }
 
